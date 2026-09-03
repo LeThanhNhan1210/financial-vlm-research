@@ -38,6 +38,58 @@ Dự án áp dụng mô hình kiến trúc **"Tam giác phân lập" (Three-pill
 
 ## 2. CÁC TIÊU CHUẨN ÁP DỤNG CHO THƯ MỤC GITHUB
 
+### Sơ đồ Cây Thư mục GitHub Repository
+```text
+financial-vlm-research/ (Mã nguồn GitHub - Chỉ lưu Code & Logic)
+├── configs/                         # Quản lý toàn bộ cấu hình (YAML/JSON)
+│   ├── qlora_config.yaml            # Cấu hình LoRA (r, lora_alpha, target_modules)
+│   ├── training_config.yaml         # Learning rate, batch size, gradient accumulation
+│   ├── prompt_templates.yaml        # Mẫu prompt CoT tài chính & Few-shot examples
+│   └── eval_rubric.yaml             # Tiêu chí chấm điểm của LLM-as-a-Judge
+├── data/                            # Phân tầng cấu trúc dữ liệu nhẹ
+│   ├── raw/.gitkeep                 # Thư mục giữ chỗ (Dữ liệu nặng lưu ở Drive)
+│   ├── processed/.gitkeep
+│   ├── annotations/.gitkeep
+│   └── splits/                      # File phân chia mẫu theo Time-series (text nhẹ)
+│       ├── train.jsonl
+│       ├── val.jsonl
+│       └── test.jsonl
+├── docs/                            # Hồ sơ học thuật và Quyết định kiến trúc
+│   ├── adrs/                        # Architecture Decision Records
+│   │   └── 0001-chon-mo-hinh-vlm-va-luong-hoa-int4.md
+│   └── QUY_CHUAN_LUU_TRU_GITHUB_DRIVE.md
+├── notebooks/                       # Colab / Jupyter Notebooks phục vụ EDA và Demo
+│   └── 01_colab_workflow_demo.ipynb # Notebook khởi chạy 1-click trên Colab
+├── src/                             # Mã nguồn chính (Source code module hóa)
+│   ├── __init__.py
+│   ├── data/                        # dataset.py, preprocessor.py
+│   ├── models/                      # vlm_loader.py, lora_setup.py
+│   ├── pipeline/                    # prompt_engine.py, ocr_extractor.py
+│   ├── training/                    # trainer.py, callbacks.py
+│   └── evaluation/                  # llm_judge.py, ocr_metrics.py
+├── checkpoints/.gitkeep             # Thư mục rỗng (Trọng số thật lưu ở Drive)
+├── outputs/                         # Thư mục rỗng (Kết quả thật lưu ở Drive)
+│   ├── logs/.gitkeep
+│   ├── predictions/.gitkeep
+│   └── figures/.gitkeep
+├── scripts/                         # Script chạy dòng lệnh
+│   ├── run_train.py                 # Khởi chạy train
+│   ├── run_evaluate.py              # Khởi chạy đánh giá
+│   └── setup_drive.py               # Tự động tạo thư mục trên Google Drive
+├── skills/                          # Kỹ năng và quy chuẩn Antigravity (Bản xem trực quan)
+│   ├── financial-vlm-guidelines/
+│   ├── debugging-and-error-recovery/
+│   ├── documentation-and-adrs/
+│   └── git-workflow-and-versioning/
+├── .agents/skills/                  # Bản hệ thống tự động nạp của Antigravity
+├── .gitignore                       # Loại trừ dữ liệu nặng và checkpoint
+├── AGENTS.md                        # Quy tắc bắt buộc của dự án
+├── HANDOFF.md                       # Bàn giao tiến độ thực hiện
+├── README.md                        # Hướng dẫn cài đặt và chạy thử
+├── requirements.txt                 # Danh sách thư viện cần thiết
+└── ke_hoach_trien_khai.md           # Kế hoạch chi tiết 5 giai đoạn
+```
+
 Repository GitHub được xây dựng dựa trên **4 tiêu chuẩn công nghiệp và kỹ nghệ phần mềm quốc tế**:
 
 ### A. Tiêu chuẩn Cookiecutter Data Science (CCDS)
@@ -73,6 +125,43 @@ Repository GitHub được xây dựng dựa trên **4 tiêu chuẩn công nghi�
 ## 3. CÁC TIÊU CHUẨN ÁP DỤNG CHO THƯ MỤC GOOGLE DRIVE
 
 Thư mục gốc lưu trữ thực nghiệm được cố định tại: **`MyDrive/NCKH_AI/`** (đường dẫn truy cập trên Colab: `/content/drive/MyDrive/NCKH_AI/`).
+
+### Sơ đồ Cây Thư mục Google Drive (`MyDrive/NCKH_AI/`)
+```text
+MyDrive/
+└── NCKH_AI/                                # Thư mục gốc trên Google Drive của bạn
+    ├── 1_datasets/                         # Lưu trữ toàn bộ dữ liệu ảnh nặng
+    │   ├── raw_images/                     # Ảnh biểu đồ gốc độ phân giải cao thu thập về
+    │   │   ├── vn30_daily/                 # Ảnh nến chứng khoán Việt Nam
+    │   │   ├── sp500_daily/                # Ảnh nến thị trường Mỹ
+    │   │   └── crypto_4h/                  # Ảnh nến thị trường tiền số
+    │   ├── processed_images/               # Ảnh đã chuẩn hóa <= 512px (nạp vào GPU cực nhanh)
+    │   └── dataset_archives/               # Các file nén .zip dự phòng (tăng tốc I/O Colab)
+    │
+    ├── 2_checkpoints/                      # Nơi tự động lưu trọng số LoRA khi train trên Colab
+    │   ├── qlora_exp01_baseline/           # Thực nghiệm 1: LoRA cơ bản (checkpoint-50, 100...)
+    │   ├── qlora_exp02_full_cot/           # Thực nghiệm 2: Huấn luyện với CoT
+    │   └── best_model_adapter/             # TRỌNG SỐ TỐT NHẤT (chỉ ~60-80 MB để demo/nghiệm thu)
+    │       ├── adapter_model.safetensors
+    │       └── adapter_config.json
+    │
+    ├── 3_experiment_outputs/               # Kết quả thực nghiệm và đánh giá
+    │   ├── predictions/                    # File sinh văn bản của các mô hình (.jsonl)
+    │   │   ├── zero_shot_results.jsonl
+    │   │   ├── few_shot_results.jsonl
+    │   │   └── qlora_results.jsonl
+    │   ├── evaluations/                    # Bảng điểm số và số liệu học thuật
+    │   │   ├── llm_judge_scores.json       # Bảng điểm chi tiết từng tiêu chí từ GPT-4o Judge
+    │   │   ├── ocr_error_metrics.csv       # Sai số giá (MAE, MAPE)
+    │   │   └── backtest_simulation.csv     # Bảng đo Win-rate %, PnL giả lập
+    │   ├── figures/                        # Đồ thị, hình vẽ chèn vào luận văn và slide
+    │   │   ├── loss_curves.png             # Biểu đồ hàm loss theo epoch
+    │   │   └── benchmark_comparison.png    # Biểu đồ so sánh giữa các mô hình
+    │   └── logs/                           # Nhật ký huấn luyện và TensorBoard events
+    │
+    └── 4_backups/                          # Các bản sao lưu khẩn cấp (Snapshot code, API keys)
+```
+
 Google Drive đóng vai trò là tầng lưu trữ bền vững (State Persistence Layer), được thiết kế dựa trên **4 cơ sở kỹ thuật**:
 
 ### A. Chuẩn Vòng đời Hiện vật MLOps (MLflow / WandB / DVC Artifacts Standard)
