@@ -1,0 +1,23 @@
+# ==============================================================================
+# THÔNG SỐ CẤU HÌNH ĐÁNH GIÁ THỰC CHIẾN (SIMULATED BACKTESTING - TẦNG 3)
+# ==============================================================================
+
+backtest:
+  initial_capital: 10000.0             # Vốn mô phỏng ban đầu ($10,000 USD)
+  risk_per_trade_percent: 2.0          # Rủi ro tối đa trên mỗi giao dịch (2% tài khoản)
+  max_open_positions: 3                # Tối đa 3 vị thế mở cùng lúc
+  
+  execution:
+    slippage_percent: 0.05             # Tỷ lệ trượt giá mô phỏng (0.05%)
+    commission_percent: 0.10           # Phí giao dịch sàn (0.10%)
+    default_risk_reward_ratio: 2.0     # Tỷ lệ Lợi nhuận / Rủi ro (R:R) tối thiểu để kích hoạt lệnh
+    
+  holding_period:
+    max_bars: 20                       # Đóng vị thế sau tối đa 20 nến nếu chưa chạm Stop Loss / Take Profit
+    
+  target_metrics:
+    - "win_rate_percent"               # Tỷ lệ lệnh thắng (%)
+    - "profit_factor"                  # Tỷ số Tổng Lãi / Tổng Lỗ
+    - "directional_accuracy_percent"   # Tỷ lệ dự đoán đúng hướng nến kế tiếp (%)
+    - "sharpe_ratio"                   # Hệ số Sharpe
+    - "max_drawdown_percent"           # Mức sụt giảm tài khoản cực đại (%)

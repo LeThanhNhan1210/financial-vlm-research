@@ -82,10 +82,11 @@ Toàn bộ mã nguồn đã được đóng gói thành các module độc lập
 | **Cấu trúc thư mục mã nguồn** | Hoàn thành 100% | Toàn bộ `src/`, `configs/`, `scripts/` đã sẵn sàng |
 | **Hồ sơ ADRs** | Hoàn thành ADR-0001 | Sẵn sàng bổ sung ADR-0002 khi chốt dataset split |
 | **Hệ thống Skills & Rules** | Hoàn thành 4 Skills | Lưu tại cả `.agents/skills/` và `skills/` |
-| **Tài liệu quy chuẩn lưu trữ** | Hoàn thành 100% | File `docs/QUY_CHUAN_LUU_TRU_GITHUB_DRIVE.md` đã có 2 cây thư mục |
-| **Đồng bộ Google Drive** | Đã trỏ về `NCKH_AI` | Script `setup_drive.py` và callback đã sẵn sàng |
-| **Git trên máy tính** | Chưa cài đặt | Cần cài Git for Windows hoặc GitHub Desktop ở bước tiếp theo |
-| **Dữ liệu thực tế** | Chưa thu thập | Chờ tiến hành ở Giai đoạn 1 |
+| **Tài liệu quy chuẩn lưu trữ** | Hoàn thành 100% | File `docs/QUY_CHUAN_LUU_TRU_GITHUB_DRIVE.md` |
+| **Đồng bộ Google Drive** | Hoàn thành 100% | Đã tạo đầy đủ cấu trúc thư mục trong `MyDrive/NCKH_AI` |
+| **Mã nguồn trên GitHub** | Hoàn thành 100% | Đã push toàn bộ repo lên GitHub |
+| **Bộ thông số hoàn chỉnh** | Hoàn thành 100% | Đã có `.env.example`, `dataset_config`, `backtest_config` |
+| **Dữ liệu thực tế & Nhãn CoT** | Sẵn sàng triển khai | Bắt đầu Giai đoạn 1 (Phase 1) |
 
 ---
 
