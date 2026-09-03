@@ -1,0 +1,23 @@
+# Bộ tiêu chí chấm điểm chất lượng lập luận (LLM-as-a-Judge Rubric)
+judge_model: "gpt-4o"
+
+criteria:
+  financial_soundness:
+    weight: 0.35
+    description: "Tính đúng đắn và logic theo nguyên lý phân tích kỹ thuật tài chính."
+    scale: 1-5
+  
+  internal_consistency:
+    weight: 0.25
+    description: "Sự nhất quán giữa nhận định xu hướng và các mức giá mục tiêu / cắt lỗ."
+    scale: 1-5
+
+  risk_awareness:
+    weight: 0.20
+    description: "Mức độ cảnh báo rủi ro, phân tích khối lượng và xác định điểm vi phạm mô hình."
+    scale: 1-5
+
+  hallucination_penalty:
+    weight: 0.20
+    description: "Không bịa đặt các con số giá trị hoặc mốc thời gian không có trên biểu đồ."
+    scale: 1-5

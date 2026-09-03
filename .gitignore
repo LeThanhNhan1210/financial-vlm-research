@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches & Checkpoints
+.ipynb_checkpoints/
+checkpoints/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+
+# Data directories (do not push large raw datasets to Git)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Environments & Keys
+.env
+.venv/
+env/
+venv/
+*.local
+
+# Outputs & Logs
+outputs/logs/*
+!outputs/logs/.gitkeep
+outputs/predictions/*
+!outputs/predictions/.gitkeep
+outputs/figures/*
+!outputs/figures/.gitkeep
+wandb/
+runs/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
