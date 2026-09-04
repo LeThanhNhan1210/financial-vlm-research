@@ -19,3 +19,7 @@ Tài liệu này định nghĩa các quy chuẩn bắt buộc mà AI Agent và n
 
 ## 4. Kiểm soát ảo giác thị giác (Anti-Hallucination)
 - Luôn có cơ chế kiểm tra chéo (Cross-validation) giữa số liệu OCR trích xuất được từ trục tọa độ và kết quả suy luận thị giác từ Vision Encoder.
+
+## 5. Lưu trữ Hồ sơ Thực nghiệm Khoa học (Scientific Logging & Paper Trail)
+- Tuyệt đối không để trôi số liệu thực nghiệm (VRAM, loss, throughput, metrics) trên terminal hay notebook.
+- Mọi kết quả đo đạc phải được lập tức số hóa và ghi chép thành file Markdown trong thư mục `docs/benchmarks/` hoặc `docs/experiments/` kèm theo bảng định lượng và đoạn văn học thuật mẫu (Thesis Snippet), tuân thủ nghiêm ngặt kỹ năng `scientific-research-logging`.
