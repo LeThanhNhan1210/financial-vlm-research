@@ -41,23 +41,62 @@ class FinancialChartDataset(Dataset):
     def __len__(self) -> int:
         return len(self.data)
 
+    def _resolve_image_path(self, raw_path_str: str) -> Path:
+        """Tự động tìm kiếm đường dẫn ảnh trên các vị trí khả dĩ trên Drive hoặc Local."""
+        p = Path(raw_path_str)
+        if p.is_absolute() and p.exists():
+            return p
+
+        # 1. Thử với image_root được chỉ định
+        if self.image_root:
+            cand = self.image_root / p
+            if cand.exists():
+                return cand
+
+        # 2. Thử với đường dẫn chuẩn trên Google Drive Colab
+        for drive_base in [
+            Path("/content/drive/MyDrive/NCKH_AI/1_datasets/raw_images"),
+            Path("/content/drive/My Drive/NCKH_AI/1_datasets/raw_images"),
+        ]:
+            cand = drive_base / p
+            if cand.exists():
+                return cand
+
+        # 3. Thử theo cấu trúc thư mục lân cận của split_file
+        if self.split_file:
+            cand = self.split_file.parent.parent / "raw_images" / p
+            if cand.exists():
+                return cand
+
+        # 4. Thử data/raw hoặc data/raw_images local
+        for loc in [Path("data/raw"), Path("data/raw_images")]:
+            cand = loc / p
+            if cand.exists():
+                return cand
+
+        # Fallback
+        return self.image_root / p if self.image_root else p
+
     def get_conversation(self, idx: int) -> List[Dict[str, Any]]:
         """
         Định dạng bản ghi thành cấu trúc hội thoại đa phương thức chuẩn của Qwen2.5-VL:
         User: [Image + Instruction] -> Assistant: [CoT Reasoning + Action].
         """
         item = self.data[idx]
-        image_path = self.image_root / item["image_path"] if self.image_root else Path(item["image_path"])
+        image_path = self._resolve_image_path(item.get("image_path", ""))
 
         # Load image if exists, else keep path
-        if image_path.exists():
+        if image_path.exists() and HAS_PIL:
             image = Image.open(image_path).convert("RGB")
             if self.transform:
                 image = self.transform(image)
         else:
             image = None
 
-        instruction = item.get("instruction", "Hãy phân tích biểu đồ kỹ thuật này theo quy chuẩn CMT 4 bước và đề xuất chiến lược xử lý.")
+        instruction = item.get(
+            "instruction",
+            "Hãy phân tích biểu đồ kỹ thuật này theo quy chuẩn CMT 4 bước và đề xuất chiến lược xử lý.",
+        )
         cot = item.get("cot_reasoning", "").strip()
         action = item.get("action", "").strip()
 
@@ -81,9 +120,9 @@ class FinancialChartDataset(Dataset):
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         item = self.data[idx]
-        image_path = self.image_root / item["image_path"] if self.image_root else Path(item["image_path"])
+        image_path = self._resolve_image_path(item.get("image_path", ""))
         image = None
-        if image_path.exists():
+        if image_path.exists() and HAS_PIL:
             image = Image.open(image_path).convert("RGB")
             if self.transform:
                 image = self.transform(image)
@@ -99,4 +138,5 @@ class FinancialChartDataset(Dataset):
             "action": item.get("action", ""),
             "messages": messages,
         }
+
 
