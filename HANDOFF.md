@@ -48,7 +48,7 @@ Dự án đã vượt qua toàn bộ các mốc thẩm định ban đầu và ch
 | Giai đoạn | Nội dung công việc | Trạng thái | Minh chứng học thuật |
 | :--- | :--- | :---: | :--- |
 | **Phase 0** | Khởi tạo kiến trúc, nạp mô hình INT4, Smoke test VRAM | **HOÀN THÀNH 100%** | `docs/benchmarks/00_hardware_vram_smoke_test.md` |
-| **Phase 1** | Thu thập 160-220 ảnh biểu đồ nến & Tạo nhãn CoT (HITL) | **ĐANG TIẾN HÀNH** (Hoàn tất Bước 2.1: 352 ảnh) | `docs/benchmarks/02_chart_generation.md` |
+| **Phase 1** | Thu thập 160-220 ảnh biểu đồ nến & Tạo nhãn CoT (HITL) | **ĐANG TIẾN HÀNH** (Hoàn tất Bước 2.1: ~544 ảnh trọn vẹn 3 lớp tài sản) | `docs/benchmarks/02_chart_generation.md` |
 | **Phase 2** | Huấn luyện QLoRA trên Colab T4 & Đồng bộ Checkpoints Drive | Chuẩn bị | `configs/training_config.yaml`, `qlora_config.yaml` |
 | **Phase 3** | Đánh giá định lượng 3 tầng (OCR, LLM Judge, Backtest) | Chuẩn bị | `configs/eval_rubric.yaml`, `backtest_config.yaml` |
 | **Phase 4** | Nghiệm thu học thuật, xuất báo cáo & slide bảo vệ đề tài | Chuẩn bị | `docs/adrs/`, `docs/benchmarks/`, `ke_hoach_trien_khai.md` |
@@ -57,9 +57,9 @@ Dự án đã vượt qua toàn bộ các mốc thẩm định ban đầu và ch
 
 ## 3. LỘ TRÌNH HÀNH ĐỘNG TIẾP THEO (NEXT STEPS CHO PHASE 1)
 
-1.  **Bước 2.1 (Kết xuất tự động):** **ĐÃ HOÀN THÀNH** — Xuất thành công **352 ảnh** biểu đồ nến 512×512 Dark Mode và `manifest.csv` vào Google Drive `MyDrive/NCKH_AI/1_datasets/raw_images/` (Minh chứng: `docs/benchmarks/02_chart_generation.md`).
-2.  **Bước 2.2 (Rà soát HITL):** Tác giả có thể mở thư mục Drive để quan sát trực quan một vài ảnh mẫu.
-3.  **Bước 2.3 (Khóa tập mẫu & Time-series Split):** Triển khai script phân chia dữ liệu nghiêm ngặt ($70\%$ Train, $15\%$ Val, $15\%$ Test có Purge 5 bars) theo đúng trục thời gian dựa trên `manifest.csv`.
+1.  **Bước 2.1 (Kết xuất tự động):** **ĐÃ HOÀN THÀNH 100%** — Xuất thành công **~544 ảnh** biểu đồ nến 512×512 Dark Mode đại diện cho trọn vẹn 3 lớp tài sản: **VN30**, **US_Equities**, **Crypto** và đồng bộ `manifest.csv` trên Google Drive `MyDrive/NCKH_AI/1_datasets/raw_images/` (Minh chứng: `docs/benchmarks/02_chart_generation.md`).
+2.  **Bước 2.2 (Rà soát HITL):** Tác giả có thể quan sát trực quan một số ảnh mẫu trên Drive.
+3.  **Bước 2.3 (Time-series Split nghiêm ngặt):** Triển khai script phân chia tập mẫu thời gian ($70\%$ Train, $15\%$ Val, $15\%$ Test có Purge 5 bars) dựa trên file `manifest.csv`.
 4.  **Bước 2.4 (Gán nhãn CoT 4 bước):** Khởi chạy pipeline sinh nhãn CoT (OCR $\rightarrow$ Xu hướng $\rightarrow$ Chỉ báo $\rightarrow$ Khuyến nghị) kết hợp thẩm định chuyên gia.
 
 
