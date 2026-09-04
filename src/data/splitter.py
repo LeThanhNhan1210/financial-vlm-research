@@ -198,8 +198,14 @@ def split_manifest(
         with open(jsonl_path, "w", encoding="utf-8") as f:
             for rec in records:
                 f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            f.flush()
+            try:
+                os.fsync(f.fileno())
+            except OSError:
+                pass
         file_paths[split_name] = str(jsonl_path)
         logger.info(f"Saved {len(records)} records to {jsonl_path}")
+
 
     total_count = len(df)
     summary_stats = {

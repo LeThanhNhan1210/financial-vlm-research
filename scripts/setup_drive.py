@@ -13,7 +13,9 @@ def setup_drive_directories(drive_root: str = "/content/drive/MyDrive/NCKH_AI"):
         f"{drive_root}/1_datasets/raw_images/crypto_4h",
         f"{drive_root}/1_datasets/processed_images",
         f"{drive_root}/1_datasets/dataset_archives",
+        f"{drive_root}/1_datasets/splits",
         f"{drive_root}/2_checkpoints/best_model_adapter",
+
         f"{drive_root}/3_experiment_outputs/predictions",
         f"{drive_root}/3_experiment_outputs/evaluations",
         f"{drive_root}/3_experiment_outputs/figures",
