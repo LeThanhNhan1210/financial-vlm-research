@@ -48,7 +48,7 @@ Dự án đã vượt qua toàn bộ các mốc thẩm định ban đầu và ch
 | Giai đoạn | Nội dung công việc | Trạng thái | Minh chứng học thuật |
 | :--- | :--- | :---: | :--- |
 | **Phase 0** | Khởi tạo kiến trúc, nạp mô hình INT4, Smoke test VRAM | **HOÀN THÀNH 100%** | `docs/benchmarks/00_hardware_vram_smoke_test.md` |
-| **Phase 1** | Thu thập 160-220 ảnh biểu đồ nến & Tạo nhãn CoT (HITL) | **ĐANG TIẾN HÀNH** (Hoàn tất Bước 2.1 & 2.3: ~544 ảnh & Script Time-series Split) | `docs/benchmarks/02_chart_generation.md`, `docs/benchmarks/03_timeseries_split.md` |
+| **Phase 1** | Thu thập 160-220 ảnh biểu đồ nến & Tạo nhãn CoT (HITL) | **ĐANG TIẾN HÀNH** (Hoàn tất Bước 2.1 & 2.3: 358 ảnh & Time-series Split) | `docs/benchmarks/02_chart_generation.md`, `docs/benchmarks/03_timeseries_split.md` |
 | **Phase 2** | Huấn luyện QLoRA trên Colab T4 & Đồng bộ Checkpoints Drive | Chuẩn bị | `configs/training_config.yaml`, `qlora_config.yaml` |
 | **Phase 3** | Đánh giá định lượng 3 tầng (OCR, LLM Judge, Backtest) | Chuẩn bị | `configs/eval_rubric.yaml`, `backtest_config.yaml` |
 | **Phase 4** | Nghiệm thu học thuật, xuất báo cáo & slide bảo vệ đề tài | Chuẩn bị | `docs/adrs/`, `docs/benchmarks/`, `ke_hoach_trien_khai.md` |
@@ -57,10 +57,11 @@ Dự án đã vượt qua toàn bộ các mốc thẩm định ban đầu và ch
 
 ## 3. LỘ TRÌNH HÀNH ĐỘNG TIẾP THEO (NEXT STEPS CHO PHASE 1)
 
-1.  **Bước 2.1 (Kết xuất tự động):** **ĐÃ HOÀN THÀNH 100%** — Xuất thành công **~544 ảnh** biểu đồ nến 512×512 Dark Mode đại diện cho trọn vẹn 3 lớp tài sản: **VN30**, **US_Equities**, **Crypto** và đồng bộ `manifest.csv` trên Google Drive `MyDrive/NCKH_AI/1_datasets/raw_images/` (Minh chứng: `docs/benchmarks/02_chart_generation.md`).
+1.  **Bước 2.1 (Kết xuất tự động):** **ĐÃ HOÀN THÀNH 100%** — Xuất thành công **358 ảnh** biểu đồ nến 512×512 Dark Mode đại diện cho trọn vẹn 3 lớp tài sản: **VN30**, **US_Equities**, **Crypto** và đồng bộ `manifest.csv` trên Google Drive `MyDrive/NCKH_AI/1_datasets/raw_images/` (Minh chứng: `docs/benchmarks/02_chart_generation.md`, vượt 162% so với mục tiêu cơ sở 220 ảnh).
 2.  **Bước 2.2 (Rà soát HITL):** Tác giả có thể quan sát trực quan một số ảnh mẫu trên Drive.
-3.  **Bước 2.3 (Time-series Split nghiêm ngặt):** **ĐÃ HOÀN THÀNH 100%** — Xây dựng module `src/data/splitter.py`, script CLI `scripts/split_dataset.py` và báo cáo khoa học `docs/benchmarks/03_timeseries_split.md`. Hỗ trợ phân chia theo trục thời gian (70% Train, 15% Val, 15% Test) kết hợp Embargo Purge buffer 30 nến để loại bỏ hoàn toàn Look-ahead Bias.
-4.  **Bước 2.4 (Gán nhãn CoT 4 bước):** Khởi chạy pipeline sinh nhãn CoT (OCR $\rightarrow$ Xu hướng $\rightarrow$ Chỉ báo $\rightarrow$ Khuyến nghị) kết hợp thẩm định chuyên gia.
+3.  **Bước 2.3 (Time-series Split nghiêm ngặt):** **ĐÃ HOÀN THÀNH 100%** — Phân chia thành công **358 biểu đồ** theo trục thời gian tuyệt đối trên Google Colab & Drive: **237 Train** (66.20%, `2022-01-03` $\to$ `2024-08-30`), **44 Val** (12.29%, `2024-08-20` $\to$ `2025-04-02`), **55 Test** (15.36%, `2025-03-24` $\to$ `2025-12-11`), và loại bỏ **22 mẫu cách ly** (Embargo Purge, 6.15%) để triệt tiêu 100% Look-ahead Bias (Minh chứng: `docs/benchmarks/03_timeseries_split.md`).
+4.  **Bước 2.4 (Gán nhãn CoT 4 bước):** Khởi chạy pipeline sinh nhãn CoT cho 336 mẫu hợp lệ (237 Train, 44 Val, 55 Test) theo quy chuẩn CMT kết hợp thẩm định chuyên gia 30% (~101 mẫu).
+
 
 
 
