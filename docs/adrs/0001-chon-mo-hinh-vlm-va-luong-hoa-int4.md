@@ -26,8 +26,11 @@ Thách thức: Các mô hình VLM hiện đại (8B - 11B) khi nạp ở độ c
 Chọn **Phương án C**: Sử dụng họ mô hình Qwen-VL (bản 8B) kết hợp lượng hóa INT4 NF4 và kỹ thuật tinh chỉnh QLoRA.
 
 ## 4. Hệ quả & Đánh đổi (Consequences)
-* **Tích cực:** Quá trình huấn luyện diễn ra ổn định trên Colab T4 với `batch_size = 1` và `gradient_accumulation_steps = 16`, triệt tiêu hoàn toàn rủi ro OOM.
+* **Tích cực:** 
+  * Thực nghiệm kiểm chứng thực tế tại Google Colab T4 (2026-09-04) xác nhận mô hình nạp trơn tru ở **7.74 GB VRAM / 15.00 GB** (xem chi tiết tại [00_hardware_vram_smoke_test.md](file:///e:/financial-vlm-research/docs/benchmarks/00_hardware_vram_smoke_test.md)).
+  * Tổng số tham số cần huấn luyện chỉ còn **47,589,376 / 8,339,756,032** (chỉ chiếm **0.5706%**), đóng băng hoàn toàn Vision Encoder.
+  * Quá trình huấn luyện diễn ra ổn định trên Colab T4 với `batch_size = 1` và `gradient_accumulation_steps = 16`, triệt tiêu hoàn toàn rủi ro OOM.
 * **Đánh đổi:** Card T4 không hỗ trợ native BF16, do đó phải duy trì tính toán ở chế độ FP16 mixed precision và kiểm soát chặt chẽ để tránh hiện tượng tràn số / loss NaN.
 
 ## 5. Tích hợp vào Báo cáo Khoa học (Thesis Mapping)
-Tài liệu này là cơ sở trực tiếp cho **Mục 2.3 (Mô hình nền tảng)** và **Mục 3.2 (Kỹ thuật lượng hóa và tối ưu bộ nhớ)** trong Báo cáo tổng kết đề tài.
+Tài liệu này và bảng đo đạc tại [00_hardware_vram_smoke_test.md](file:///e:/financial-vlm-research/docs/benchmarks/00_hardware_vram_smoke_test.md) là cơ sở trực tiếp cho **Mục 2.3 (Mô hình nền tảng)** và **Mục 3.2 (Kỹ thuật lượng hóa và tối ưu bộ nhớ)** trong Báo cáo tổng kết đề tài.
