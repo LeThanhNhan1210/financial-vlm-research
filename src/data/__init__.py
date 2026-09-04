@@ -1,8 +1,16 @@
 """Data loading and preprocessing utilities."""
 from .dataset import FinancialChartDataset
 from .preprocessor import ChartPreprocessor
-from .chart_generator import fetch_ohlcv, detect_patterns, render_chart, generate_all
-from .splitter import split_manifest, split_series_chronological
+
+try:
+    from .chart_generator import fetch_ohlcv, detect_patterns, render_chart, generate_all
+except ImportError:
+    fetch_ohlcv = detect_patterns = render_chart = generate_all = None
+
+try:
+    from .splitter import split_manifest, split_series_chronological
+except ImportError:
+    split_manifest = split_series_chronological = None
 
 __all__ = [
     "FinancialChartDataset",
@@ -14,5 +22,6 @@ __all__ = [
     "split_manifest",
     "split_series_chronological",
 ]
+
 
 

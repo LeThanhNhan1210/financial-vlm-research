@@ -1,5 +1,11 @@
-"""Image preprocessing utilities for financial charts."""
-from PIL import Image, ImageEnhance
+try:
+    from PIL import Image, ImageEnhance
+    HAS_PIL = True
+except ImportError:
+    HAS_PIL = False
+    Image = None
+    ImageEnhance = None
+
 
 
 class ChartPreprocessor:

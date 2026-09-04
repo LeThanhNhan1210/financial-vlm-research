@@ -49,19 +49,36 @@ Dự án đã vượt qua toàn bộ các mốc thẩm định ban đầu và ch
 | :--- | :--- | :---: | :--- |
 | **Phase 0** | Khởi tạo kiến trúc, nạp mô hình INT4, Smoke test VRAM | **HOÀN THÀNH 100%** | `docs/benchmarks/00_hardware_vram_smoke_test.md` |
 | **Phase 1** | Thu thập 160-220 ảnh biểu đồ nến & Tạo nhãn CoT (HITL) | **HOÀN THÀNH 100%** (358 ảnh, Time-series Split & CoT Pipeline) | `docs/benchmarks/02_chart_generation.md`, `03_timeseries_split.md`, `04_cot_labeling.md` |
-| **Phase 2** | Huấn luyện QLoRA trên Colab T4 & Đồng bộ Checkpoints Drive | Chuẩn bị | `configs/training_config.yaml`, `qlora_config.yaml` |
+| **Phase 2** | Huấn luyện QLoRA trên Colab T4 & Đồng bộ Checkpoints Drive | **ĐÃ SẴN SÀNG 100% (READY TO RUN)** | `src/training/collator.py`, `callbacks.py`, `trainer.py`, `scripts/run_train.py` |
 | **Phase 3** | Đánh giá định lượng 3 tầng (OCR, LLM Judge, Backtest) | Chuẩn bị | `configs/eval_rubric.yaml`, `backtest_config.yaml` |
 | **Phase 4** | Nghiệm thu học thuật, xuất báo cáo & slide bảo vệ đề tài | Chuẩn bị | `docs/adrs/`, `docs/benchmarks/`, `ke_hoach_trien_khai.md` |
 
 ---
 
-## 3. LỘ TRÌNH HÀNH ĐỘNG TIẾP THEO (BÀN GIAO SANG PHASE 2)
+## 3. LỘ TRÌNH HÀNH ĐỘNG TIẾP THEO (HƯỚNG DẪN THỰC THI PHASE 2 TRÊN COLAB T4)
 
-1.  **Bước 2.1 (Kết xuất tự động):** **ĐÃ HOÀN THÀNH 100%** — Xuất thành công **358 ảnh** biểu đồ nến 512×512 Dark Mode đại diện cho trọn vẹn 3 lớp tài sản: **VN30**, **US_Equities**, **Crypto** và đồng bộ `manifest.csv` trên Google Drive `MyDrive/NCKH_AI/1_datasets/raw_images/` (Minh chứng: `docs/benchmarks/02_chart_generation.md`, vượt 162% so với mục tiêu cơ sở 220 ảnh).
-2.  **Bước 2.2 (Rà soát HITL):** Tác giả có thể quan sát trực quan một số ảnh mẫu trên Drive.
-3.  **Bước 2.3 (Time-series Split nghiêm ngặt):** **ĐÃ HOÀN THÀNH 100%** — Phân chia thành công **358 biểu đồ** theo trục thời gian tuyệt đối trên Google Colab & Drive: **237 Train** (66.20%, `2022-01-03` $\to$ `2024-08-30`), **44 Val** (12.29%, `2024-08-20` $\to$ `2025-04-02`), **55 Test** (15.36%, `2025-03-24` $\to$ `2025-12-11`), và loại bỏ **22 mẫu cách ly** (Embargo Purge, 6.15%) để triệt tiêu 100% Look-ahead Bias (Minh chứng: `docs/benchmarks/03_timeseries_split.md`).
-4.  **Bước 2.4 (Gán nhãn CoT 4 bước & Thẩm định HITL):** **ĐÃ HOÀN THÀNH 100%** — Xây dựng và kiểm chứng thành công pipeline sinh nhãn CoT 4 bước chuẩn CMT (`src/pipeline/cot_generator.py`), tích hợp chốt chặn Anti-Hallucination (`anti_hallucination.py`), cơ chế lấy mẫu phân tầng 30% HITL Audit (`audit_sampler.py`), CLI Runner (`scripts/generate_cot_labels.py`), và đạt 6/6 unit tests pass (Minh chứng: `docs/benchmarks/04_cot_labeling.md`).
-5.  **Mốc hành động tiếp theo (Phase 2):** Khởi chạy huấn luyện QLoRA trên Google Colab GPU T4 kết hợp `DriveSyncCallback` tự động sao lưu checkpoint lên Google Drive `MyDrive/NCKH_AI/2_checkpoints/`.
+1.  **Môi trường & Bộ mã nguồn:** Toàn bộ kiến trúc huấn luyện Phase 2 đã được chuẩn bị và kiểm thử tự động đạt 100%:
+    *   **Data Collator & Loss Masking:** [src/training/collator.py](file:///E:/financial-vlm-research/src/training/collator.py) — Đóng gói đồng thời token hình ảnh và văn bản, gán nhãn `-100` cho prompt/image tokens để chỉ tính gradient loss trên chuỗi CoT và action.
+    *   **Tự động sao lưu Google Drive:** [src/training/callbacks.py](file:///E:/financial-vlm-research/src/training/callbacks.py) — Lớp `DriveSyncCallback` tự động copy adapter weights sang Google Drive `/content/drive/MyDrive/NCKH_AI/2_checkpoints/` sau mỗi 50 steps.
+    *   **Bộ quản lý Trainer:** [src/training/trainer.py](file:///E:/financial-vlm-research/src/training/trainer.py) — Thiết lập chuẩn phần cứng Colab T4: `batch_size=1`, `gradient_accumulation_steps=16`, `gradient_checkpointing=True`, `fp16=True`.
+    *   **CLI Runner:** [scripts/run_train.py](file:///E:/financial-vlm-research/scripts/run_train.py) — CLI Runner chuẩn Cookiecutter.
+2.  **Lệnh thực thi trực tiếp trên Google Colab GPU T4:**
+    ```bash
+    # 1. Kiểm tra dry-run kết nối dataset và format hội thoại (0 VRAM):
+    python scripts/run_train.py \
+        --train-file /content/drive/MyDrive/NCKH_AI/1_datasets/splits/train_cot.jsonl \
+        --val-file /content/drive/MyDrive/NCKH_AI/1_datasets/splits/val.jsonl \
+        --dry-run
+
+    # 2. Bắt đầu phiên huấn luyện QLoRA chính thức (3 epochs, lr=2e-4):
+    python scripts/run_train.py \
+        --train-file /content/drive/MyDrive/NCKH_AI/1_datasets/splits/train_cot.jsonl \
+        --val-file /content/drive/MyDrive/NCKH_AI/1_datasets/splits/val.jsonl \
+        --output-dir /content/drive/MyDrive/NCKH_AI/2_checkpoints/qlora_run \
+        --epochs 3 \
+        --lr 2e-4
+    ```
+
 
 
 
