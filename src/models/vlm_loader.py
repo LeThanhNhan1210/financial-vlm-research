@@ -1,6 +1,6 @@
 """Loads Vision-Language Models with 4-bit BitsAndBytes quantization."""
 import torch
-from transformers import BitsAndBytesConfig, AutoProcessor, AutoModelForVision2Seq
+from transformers import BitsAndBytesConfig, AutoProcessor
 
 
 def load_quantized_vlm(model_id: str = "Qwen/Qwen2.5-VL-7B-Instruct"):
@@ -22,8 +22,8 @@ def load_quantized_vlm(model_id: str = "Qwen/Qwen2.5-VL-7B-Instruct"):
             from transformers import AutoModelForImageTextToText
             model_class = AutoModelForImageTextToText
         except ImportError:
-            from transformers import AutoModelForVision2Seq
-            model_class = AutoModelForVision2Seq
+            from transformers import AutoModelForCausalLM
+            model_class = AutoModelForCausalLM
 
     processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
     model = model_class.from_pretrained(
