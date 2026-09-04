@@ -14,8 +14,19 @@ def load_quantized_vlm(model_id: str = "Qwen/Qwen2.5-VL-7B-Instruct"):
         bnb_4bit_compute_dtype=torch.float16,
     )
 
+    try:
+        from transformers import Qwen2_5_VLForConditionalGeneration
+        model_class = Qwen2_5_VLForConditionalGeneration
+    except ImportError:
+        try:
+            from transformers import AutoModelForImageTextToText
+            model_class = AutoModelForImageTextToText
+        except ImportError:
+            from transformers import AutoModelForVision2Seq
+            model_class = AutoModelForVision2Seq
+
     processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
-    model = AutoModelForVision2Seq.from_pretrained(
+    model = model_class.from_pretrained(
         model_id,
         quantization_config=bnb_config,
         device_map="auto",
