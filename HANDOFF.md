@@ -48,7 +48,7 @@ Dự án đã vượt qua toàn bộ các mốc thẩm định ban đầu và ch
 | Giai đoạn | Nội dung công việc | Trạng thái | Minh chứng học thuật |
 | :--- | :--- | :---: | :--- |
 | **Phase 0** | Khởi tạo kiến trúc, nạp mô hình INT4, Smoke test VRAM | **HOÀN THÀNH 100%** | `docs/benchmarks/00_hardware_vram_smoke_test.md` |
-| **Phase 1** | Thu thập 160-220 ảnh biểu đồ nến & Tạo nhãn CoT (HITL) | **ĐANG TIẾN HÀNH** | `docs/HUONG_DAN_THU_THAP_DU_LIEU_CHINH_THONG.md` |
+| **Phase 1** | Thu thập 160-220 ảnh biểu đồ nến & Tạo nhãn CoT (HITL) | **ĐANG TIẾN HÀNH** (Hoàn thành 100% Code Bước 2.1) | `docs/adrs/0002-pipeline-thu-thap-du-lieu-va-ve-bieu-do.md` |
 | **Phase 2** | Huấn luyện QLoRA trên Colab T4 & Đồng bộ Checkpoints Drive | Chuẩn bị | `configs/training_config.yaml`, `qlora_config.yaml` |
 | **Phase 3** | Đánh giá định lượng 3 tầng (OCR, LLM Judge, Backtest) | Chuẩn bị | `configs/eval_rubric.yaml`, `backtest_config.yaml` |
 | **Phase 4** | Nghiệm thu học thuật, xuất báo cáo & slide bảo vệ đề tài | Chuẩn bị | `docs/adrs/`, `docs/benchmarks/`, `ke_hoach_trien_khai.md` |
@@ -57,13 +57,19 @@ Dự án đã vượt qua toàn bộ các mốc thẩm định ban đầu và ch
 
 ## 3. LỘ TRÌNH HÀNH ĐỘNG TIẾP THEO (NEXT STEPS CHO PHASE 1)
 
-1.  **Đẩy các cập nhật mới lên GitHub:**
-    Tại terminal máy tính, chạy:
+1.  **Đẩy mã nguồn cập nhật lên GitHub từ máy Local:**
     ```bash
+    git add .
+    git commit -m "feat(data): implement chart generator pipeline and 19 candlestick patterns (ADR-0002)"
     git push origin main
     ```
-2.  **Triển khai Pipeline Thu thập Dữ liệu Lai (Human-in-the-Loop):**
-    *   **Bước 2.1 (Tự động):** Chạy script Python kết xuất tự động 150 – 200 ảnh biểu đồ nến chuẩn 512x512 Dark Mode (kèm EMA, Volume) cho VN30 (`vnstock3`), US Equities (`yfinance`) và Crypto (`ccxt`) ném vào Drive `1_datasets/raw_images/`.
-    *   **Bước 2.2 (Thủ công / Tác giả rà soát):** Tác giả kiểm tra thư mục Drive, lọc bỏ các mẫu nến nhiễu và bổ sung các mẫu hình đặc thù (Flash crash, Breakout, Bẫy giá) từ TradingView.
-    *   **Bước 2.3 (Khóa tập mẫu):** Phân chia Time-series Split nghiêm ngặt ($70\%$ Train, $15\%$ Val, $15\%$ Test) có khoảng đệm Purge 5 bars.
-    *   **Bước 2.4 (Gán nhãn CoT):** Khởi chạy pipeline sinh nhãn suy luận CoT 4 bước (OCR $\rightarrow$ Xu hướng $\rightarrow$ Chỉ báo $\rightarrow$ Khuyến nghị) kết hợp rà soát chuyên gia 30%.
+2.  **Khởi chạy kết xuất ảnh trên Google Colab (Đồng bộ Drive):**
+    Trên notebook Google Colab (đã mount Google Drive):
+    ```bash
+    !pip install -r requirements.txt
+    !python scripts/generate_charts.py --config configs/dataset_config.yaml --output-dir /content/drive/MyDrive/NCKH_AI/1_datasets/raw_images/
+    ```
+3.  **Bước 2.2 (Thủ công / Tác giả rà soát HITL):** Tác giả kiểm tra thư mục Drive, lọc bỏ nến nhiễu và bổ sung các mẫu hình đặc thù từ TradingView nếu cần.
+4.  **Bước 2.3 (Khóa tập mẫu):** Triển khai script Time-series Split ($70\%$ Train, $15\%$ Val, $15\%$ Test có Purge 5 bars) dựa trên file `manifest.csv`.
+5.  **Bước 2.4 (Gán nhãn CoT):** Khởi chạy pipeline sinh nhãn CoT 4 bước kết hợp rà soát chuyên gia tối thiểu $30\%$.
+
