@@ -51,6 +51,7 @@ def fetch_ohlcv(
                 df = df[df.index <= end_ts]
 
         elif asset_class == "VN30":
+            # 1. Thử lấy qua vnstock3
             try:
                 from vnstock3 import Vnstock
                 stock = Vnstock().stock(symbol=symbol, source='VCI')
@@ -63,7 +64,22 @@ def fetch_ohlcv(
                         raw = raw.set_index('Date')
                     df = raw[['Open', 'High', 'Low', 'Close', 'Volume']].dropna()
             except Exception as vn_err:
-                logger.warning(f"vnstock3 error for {symbol}: {vn_err}. (Manual TradingView HITL fallback enabled)")
+                logger.warning(f"vnstock3 error for {symbol}: {vn_err}. Trying yfinance (.VN) fallback...")
+
+            # 2. Fallback sang Yahoo Finance (.VN) chuẩn quốc tế (không bị chặn IP trên Cloud/Colab)
+            if df.empty:
+                try:
+                    import yfinance as yf
+                    yf_symbol = f"{symbol}.VN" if not symbol.endswith(".VN") else symbol
+                    interval = "1d" if timeframe.upper() == "1D" else "1h"
+                    raw = yf.download(yf_symbol, start=start_date, end=end_date, interval=interval, progress=False)
+                    if not raw.empty:
+                        if isinstance(raw.columns, pd.MultiIndex):
+                            raw.columns = [c[0] for c in raw.columns]
+                        df = raw[['Open', 'High', 'Low', 'Close', 'Volume']].dropna()
+                        logger.info(f"Successfully fetched {len(df)} rows for {symbol} via yfinance ({yf_symbol})")
+                except Exception as yf_err:
+                    logger.warning(f"yfinance fallback also failed for {symbol}: {yf_err}")
 
     except Exception as e:
         logger.error(f"Failed to fetch {symbol} ({asset_class}): {e}")

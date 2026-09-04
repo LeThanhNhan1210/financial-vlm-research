@@ -7,8 +7,8 @@ collection:
   source: "TradingView / Yahoo Finance / Binance"
   asset_classes:
     - name: "VN30"
-      symbols: ["VNINDEX", "VCB", "FPT", "HPG", "MWG", "VIC"]
-      timeframes: ["1D", "4H"]
+      symbols: ["VCB", "FPT", "HPG", "MWG", "VIC", "TCB"]
+      timeframes: ["1D"]
     - name: "US_Equities"
       symbols: ["SPY", "QQQ", "AAPL", "NVDA", "TSLA"]
       timeframes: ["1D", "4H"]
